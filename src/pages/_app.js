@@ -99,7 +99,7 @@ const MyApp = (props) => {
 };
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const shop = ctx.query.shop;
+  const { shop, host } = ctx.query;
   if (global?.ACTIVE_SHOPIFY_SHOPS?.[shop] === undefined) {
     return {
       redirect: {
@@ -110,7 +110,7 @@ MyApp.getInitialProps = async ({ ctx }) => {
     };
   }
   return {
-    host: ctx.query.host,
+    host,
   };
 };
 

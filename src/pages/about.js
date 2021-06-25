@@ -2,7 +2,7 @@ import { Heading, Page } from "@shopify/polaris";
 
 const Index = () => (
   <Page>
-    <Heading>About</Heading>
+    <Heading>About Hello</Heading>
   </Page>
 );
 

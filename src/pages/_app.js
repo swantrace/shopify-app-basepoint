@@ -99,6 +99,16 @@ const MyApp = (props) => {
 };
 
 MyApp.getInitialProps = async ({ ctx }) => {
+  const shop = ctx.query.shop;
+  if (global?.ACTIVE_SHOPIFY_SHOPS?.[shop] === undefined) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: `/api/auth?shop=${shop}`,
+      },
+      props: {},
+    };
+  }
   return {
     host: ctx.query.host,
   };

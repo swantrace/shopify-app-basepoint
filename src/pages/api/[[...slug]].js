@@ -26,10 +26,39 @@ app.use(
       // Access token and shop available in ctx.state.shopify
       const { shop } = ctx.state.shopify;
       const host = ctx.query.host;
+
+      ACTIVE_SHOPIFY_SHOPS[shop] = scope;
+      global.ACTIVE_SHOPIFY_SHOPS = ACTIVE_SHOPIFY_SHOPS;
+
+      const response = await Shopify.Webhooks.Registry.register({
+        shop,
+        accessToken,
+        path: "/api/webhooks",
+        topic: "APP_UNINSTALLED",
+        webhookHandler: async (topic, shop, body) =>
+          delete ACTIVE_SHOPIFY_SHOPS[shop],
+      });
+
+      if (!response.success) {
+        console.log(
+          `Failed to register APP_UNINSTALLED webhook: ${response.result}`
+        );
+      }
+
+      // Redirect to app with shop parameter upon auth
       ctx.redirect(`/?shop=${shop}&host=${host}`);
     },
   })
 );
+
+router.post("/api/webhooks", async (ctx) => {
+  try {
+    await Shopify.Webhooks.Registry.process(ctx.req, ctx.res);
+    console.log(`Webhook processed, returned status code 200`);
+  } catch (error) {
+    console.log(`Failed to process webhook: ${error}`);
+  }
+});
 
 router.post(
   "/api/graphql",

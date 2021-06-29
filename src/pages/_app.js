@@ -1,5 +1,5 @@
 import {
-  ApolloProvider,
+  ApolloProvider as RealApolloProvider,
   ApolloClient,
   InMemoryCache,
   ApolloLink,
@@ -11,8 +11,8 @@ import { authenticatedFetch } from "@shopify/app-bridge-utils";
 import { Redirect } from "@shopify/app-bridge/actions";
 import "@shopify/polaris/dist/styles.css";
 import translations from "@shopify/polaris/locales/en.json";
-import ClientRouter from "../components/ClientRouter";
-import { useRef } from "react";
+import ClientRouter from "@src/components/ClientRouter";
+import { AppWrapper } from "@src/lib/context.tsx";
 
 const userLoggedInFetch = (app) => {
   const fetchFunction = authenticatedFetch(app);
@@ -35,9 +35,8 @@ const userLoggedInFetch = (app) => {
   };
 };
 
-function MyProvider(props) {
+function ApolloProvider({ children }) {
   const app = useAppBridge();
-
   const client = new ApolloClient({
     cache: new InMemoryCache({
       typePolicies: {
@@ -69,19 +68,22 @@ function MyProvider(props) {
     ),
   });
 
-  const Component = props.Component;
-
-  return (
-    <ApolloProvider client={client}>
-      <Component {...props} />
-    </ApolloProvider>
-  );
+  return <RealApolloProvider client={client}>{children}</RealApolloProvider>;
 }
 
 const MyApp = (props) => {
   const { Component, pageProps, host } = props;
-  const { current: savedHost } = useRef(host);
-  console.log("savedHost", savedHost);
+
+  let savedHost = host;
+
+  if (typeof window !== "undefined") {
+    if (savedHost) {
+      window.localStorage.setItem("shopify-host", savedHost);
+    } else {
+      savedHost = window.localStorage.getItem("shopify-host");
+    }
+  }
+
   return (
     <AppProvider i18n={translations}>
       <Provider
@@ -92,25 +94,19 @@ const MyApp = (props) => {
         }}
       >
         <ClientRouter />
-        <MyProvider Component={Component} {...pageProps} />
+        <ApolloProvider>
+          <AppWrapper>
+            <Component {...pageProps} />
+          </AppWrapper>
+        </ApolloProvider>
       </Provider>
     </AppProvider>
   );
 };
 
 MyApp.getInitialProps = async ({ ctx }) => {
-  const { shop, host } = ctx.query;
-  if (global?.ACTIVE_SHOPIFY_SHOPS?.[shop] === undefined) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: `/api/auth?shop=${shop}`,
-      },
-      props: {},
-    };
-  }
   return {
-    host,
+    host: ctx.query.host,
   };
 };
 

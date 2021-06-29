@@ -1,7 +1,8 @@
 import Koa from "koa";
 import Router from "@koa/router";
 import createShopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
-import Shopify, { ApiVersion } from "@shopify/shopify-api";
+import Shopify from "@shopify/shopify-api";
+import sessionStorage from "@src/lib/session-storage";
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
@@ -11,7 +12,7 @@ Shopify.Context.initialize({
   API_VERSION: "2021-07",
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
-  SESSION_STORAGE: new Shopify.Session.MemorySessionStorage(),
+  SESSION_STORAGE: sessionStorage,
 });
 
 const ACTIVE_SHOPIFY_SHOPS = {};
@@ -69,6 +70,14 @@ router.post(
   }),
   async (ctx, next) => {
     await Shopify.Utils.graphqlProxy(ctx.req, ctx.res);
+  }
+);
+
+router.get(
+  "/api/verifyRequest",
+  verifyRequest({ authRoute: "/api/auth", fallbackRoute: "/api/auth" }),
+  async (ctx, next) => {
+    ctx.body = "true";
   }
 );
 

@@ -1,9 +1,21 @@
 import { Heading, Page } from "@shopify/polaris";
 
-const Index = () => (
-  <Page>
-    <Heading>About Hello</Heading>
-  </Page>
-);
+const About = () => {
+  // const { loading, data: dataWithCollections, fetchMore } = useQuery(
+  //   GET_COLLECTIONS,
+  //   {
+  //     variables: {
+  //       first: 50,
+  //     },
+  //   }
+  // );
 
-export default Index;
+  // console.log("dataWithCollections: ", dataWithCollections);
+  return (
+    <Page>
+      <Heading>This is About</Heading>
+    </Page>
+  );
+};
+
+export default About;

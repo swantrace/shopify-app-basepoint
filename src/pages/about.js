@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { Heading, Page } from "@shopify/polaris";
 
 const About = () => {
@@ -13,7 +14,7 @@ const About = () => {
   // console.log("dataWithCollections: ", dataWithCollections);
   return (
     <Page>
-      <Heading>This is About</Heading>
+      <Heading>This is About Hello</Heading>
     </Page>
   );
 };

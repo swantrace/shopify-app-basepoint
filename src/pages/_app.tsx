@@ -5,6 +5,7 @@ import {
   ApolloLink,
   HttpLink,
 } from '@apollo/client';
+
 import { AppProvider } from '@shopify/polaris';
 import { Provider, useAppBridge } from '@shopify/app-bridge-react';
 import { authenticatedFetch } from '@shopify/app-bridge-utils';
@@ -12,12 +13,29 @@ import { Redirect } from '@shopify/app-bridge/actions';
 import '@shopify/polaris/dist/styles.css';
 import translations from '@shopify/polaris/locales/en.json';
 import ClientRouter from '@components/ClientRouter';
-import { AppWrapper } from '@lib/context.tsx';
+import { AppWrapper } from '@lib/context';
+import { ClientApplication } from '@shopify/app-bridge';
+import { NextPageContext } from 'next';
 
-const userLoggedInFetch = (app) => {
+interface IAppState {
+  appInfo: any;
+  loading: any;
+  modal: any;
+  navigation: any;
+  pos: any;
+  resourcePicker: any;
+  staffMember: any;
+  titleBar: any;
+  toast: any;
+}
+
+const userLoggedInFetch = (app: ClientApplication<IAppState>) => {
   const fetchFunction = authenticatedFetch(app);
 
-  return async (uri, options) => {
+  return async (
+    uri: RequestInfo,
+    options: RequestInit | undefined
+  ): Promise<Response> => {
     const response = await fetchFunction(uri, options);
     if (
       response.headers.get('X-Shopify-API-Request-Failure-Reauthorize') === '1'
@@ -28,14 +46,14 @@ const userLoggedInFetch = (app) => {
 
       const redirect = Redirect.create(app);
       redirect.dispatch(Redirect.Action.APP, authUrlHeader || `/api/auth`);
-      return null;
+      return Promise.resolve(new Response());
     }
 
     return response;
   };
 };
 
-function ApolloProvider({ children }) {
+function ApolloProvider({ children }: { children: React.ReactNode }) {
   const app = useAppBridge();
   const client = new ApolloClient({
     cache: new InMemoryCache({
@@ -71,7 +89,13 @@ function ApolloProvider({ children }) {
   return <RealApolloProvider client={client}>{children}</RealApolloProvider>;
 }
 
-const MyApp = (props) => {
+interface IAppProps {
+  Component: any;
+  pageProps: any;
+  host: any;
+}
+
+const MyApp = (props: IAppProps): JSX.Element => {
   const { Component, pageProps, host } = props;
 
   let savedHost = host;
@@ -88,7 +112,7 @@ const MyApp = (props) => {
     <AppProvider i18n={translations}>
       <Provider
         config={{
-          apiKey: process.env.SHOPIFY_API_KEY,
+          apiKey: process.env.SHOPIFY_API_KEY ?? '',
           host: savedHost,
           forceRedirect: true,
         }}
@@ -104,10 +128,8 @@ const MyApp = (props) => {
   );
 };
 
-MyApp.getInitialProps = async ({ ctx }) => {
-  return {
-    host: ctx.query.host,
-  };
-};
+MyApp.getInitialProps = async ({ ctx }: { ctx: NextPageContext }) => ({
+  host: ctx.query.host,
+});
 
 export default MyApp;

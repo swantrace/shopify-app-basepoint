@@ -12,11 +12,8 @@
       "jsx": true
     }
   },
-  "plugins": ["@typescript-eslint", "next", "prettier"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
-    "plugin:shopify/typescript",
-    "plugin:shopify/react",
-    "plugin:shopify/prettier",
     "airbnb",
     "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
@@ -40,17 +37,8 @@
     "@typescript-eslint/no-use-before-define": [
       "error",
       { "functions": false, "classes": false, "variables": true }
-    ]
-  },
-  "settings": {
-    "import/resolver": {
-      "babel-module": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
-      },
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "paths": ["src"]
-      }
-    }
+    ],
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-console": "off"
   }
 }

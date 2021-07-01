@@ -1,5 +1,6 @@
+/* eslint-disable shopify/jsx-no-hardcoded-content */
 /* eslint-disable react/react-in-jsx-scope */
-import { Heading, Page } from "@shopify/polaris";
+import { Heading, Page } from '@shopify/polaris';
 
 const About = () => {
   // const { loading, data: dataWithCollections, fetchMore } = useQuery(
@@ -14,7 +15,7 @@ const About = () => {
   // console.log("dataWithCollections: ", dataWithCollections);
   return (
     <Page>
-      <Heading>This is About Hello</Heading>
+      <Heading>This is About Hello World</Heading>
     </Page>
   );
 };

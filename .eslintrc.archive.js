@@ -4,10 +4,13 @@ module.exports = {
     'plugin:shopify/polaris',
     'plugin:shopify/jest',
     'plugin:shopify/webpack',
-    'prettier/prettier'
+    'prettier/prettier',
   ],
+  parser: 'babel-eslint',
   rules: {
     'import/no-unresolved': 'off',
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off',
   },
   overrides: [
     {

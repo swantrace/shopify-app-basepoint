@@ -1,0 +1,20 @@
+{
+  "presets": ["next/babel"],
+  "targets": "last 2 Chrome versions",
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./"],
+        "alias": {
+          "@components": "./src/components",
+          "@hooks": "./src/hooks",
+          "@typeDefs": "./src/types",
+          "@lib": "./src/lib",
+          "@utils": "./src/utils",
+          "@public": "./public"
+        }
+      }
+    ]
+  ]
+}

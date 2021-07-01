@@ -26,7 +26,7 @@ app.use(
     async afterAuth(ctx) {
       // Access token and shop available in ctx.state.shopify
       const { shop, accessToken, scope } = ctx.state.shopify;
-      const host = ctx.query.host;
+      const { host } = ctx.query;
 
       ACTIVE_SHOPIFY_SHOPS[shop] = scope;
       global.ACTIVE_SHOPIFY_SHOPS = ACTIVE_SHOPIFY_SHOPS;
@@ -36,8 +36,8 @@ app.use(
         accessToken,
         path: '/api/webhooks',
         topic: 'APP_UNINSTALLED',
-        webhookHandler: async (topic, shop, body) =>
-          delete ACTIVE_SHOPIFY_SHOPS[shop],
+        webhookHandler: async (topic, shopOrigin) =>
+          delete ACTIVE_SHOPIFY_SHOPS[shopOrigin],
       });
 
       if (!response.success) {
@@ -68,7 +68,7 @@ router.post(
     authRoute: '/api/auth',
     fallbackRoute: '/api/auth',
   }),
-  async (ctx, next) => {
+  async (ctx) => {
     await Shopify.Utils.graphqlProxy(ctx.req, ctx.res);
   }
 );
@@ -76,7 +76,7 @@ router.post(
 router.get(
   '/api/verifyRequest',
   verifyRequest({ authRoute: '/api/auth', fallbackRoute: '/api/auth' }),
-  async (ctx, next) => {
+  async (ctx) => {
     ctx.body = 'true';
   }
 );

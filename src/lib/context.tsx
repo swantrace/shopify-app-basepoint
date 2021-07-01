@@ -1,17 +1,16 @@
-import { useContext } from "react";
-import { createContext } from "react";
+import { useContext, createContext } from 'react';
 
-const AppGlobalContext = createContext<object | undefined>(undefined);
+const AppGlobalContext = createContext<any>(null);
 
 interface IProps {
   children: any;
 }
-export function AppWrapper({ children }: IProps) {
+export function AppWrapper({ children }: IProps): JSX.Element {
   return (
     <AppGlobalContext.Provider value={{}}>{children}</AppGlobalContext.Provider>
   );
 }
 
-export function useAppGlobalContext() {
+export function useAppGlobalContext(): any {
   return useContext(AppGlobalContext);
 }

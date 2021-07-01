@@ -1,6 +1,6 @@
-import Shopify from "@shopify/shopify-api";
-import { Session } from "@shopify/shopify-api/dist/auth/session";
-import redis from "./redis";
+import Shopify from '@shopify/shopify-api';
+import { Session } from '@shopify/shopify-api/dist/auth/session';
+import redis from './redis';
 
 const storeCallback = async (session: Session) => {
   try {
@@ -15,9 +15,8 @@ const loadCallback = async (id: string) => {
     let reply = await redis.get(id);
     if (reply) {
       return JSON.parse(reply) as Session;
-    } else {
-      return undefined;
     }
+    return undefined;
   } catch (err) {
     throw new Error(err);
   }
